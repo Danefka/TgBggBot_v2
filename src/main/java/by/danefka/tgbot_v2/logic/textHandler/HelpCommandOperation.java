@@ -2,7 +2,7 @@ package by.danefka.tgbot_v2.logic.textHandler;
 
 
 import by.danefka.tgbot_v2.annotation.TextHandler;
-import by.danefka.tgbot_v2.handler.TextCommandHandler;
+import by.danefka.tgbot_v2.handler.TextCommandOperation;
 import by.danefka.tgbot_v2.services.TelegramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 @TextHandler("/help")
 @RequiredArgsConstructor
-public class HelpCommandHandler implements TextCommandHandler {
+public class HelpCommandOperation implements TextCommandOperation {
 
     private final TelegramService telegramService;
 

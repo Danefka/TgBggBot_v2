@@ -1,16 +1,16 @@
 package by.danefka.tgbot_v2.services;
 
-import by.danefka.tgbot_v2.entity.UserContextPostgres;
+import by.danefka.tgbot_v2.entity.UserContext;
 import by.danefka.tgbot_v2.entity.UserContextRedis;
 import by.danefka.tgbot_v2.exception.UserContextNotFoundException;
 import by.danefka.tgbot_v2.mapper.UserContextMapper;
-import by.danefka.tgbot_v2.model.UserContext;
 import by.danefka.tgbot_v2.repository.UserContextPostgresRepository;
 import by.danefka.tgbot_v2.repository.UserContextRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -28,10 +28,10 @@ public class UserService {
             return userContextMapper.toEntity(userContextRedis.get());
         }
 
-        Optional<UserContextPostgres> userContextPostgres = postgresRepository.getByUserId(userId);
-        if (userContextPostgres.isPresent()) {
-            redisRepository.save(userContextMapper.toRedis(userContextPostgres.get()));
-            return userContextMapper.toEntity(userContextPostgres.get());
+        Optional<UserContext> userContext = postgresRepository.getByUserId(userId);
+        if (userContext.isPresent()) {
+            redisRepository.save(userContextMapper.toRedis(userContext.get()));
+            return userContext.get();
         }
 
         throw new UserContextNotFoundException();
@@ -42,11 +42,11 @@ public class UserService {
     }
 
 
-    @Scheduled(fixedRate = 10 * 60 * 1000)
+    @Scheduled(fixedRate = 60 * 1000)
     public void persistCacheToDatabase() {
         StreamSupport.stream(redisRepository.findAll().spliterator(), false)
                 .map(userContextMapper::toEntity)
-                .map(userContextMapper::toPostgres)
+                .filter(Objects::nonNull)
                 .forEach(postgresRepository::save);
     }
 

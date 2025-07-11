@@ -1,6 +1,8 @@
 package by.danefka.tgbot_v2.entity;
 
 import by.danefka.tgbot_v2.model.UserStatus;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -14,8 +16,9 @@ public class UserContextRedis {
 
     private String userName;
 
-    private UserStatus status;
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
 
     @TimeToLive
-    private long ttl = 1800L;
+    private long ttl = 180L;
 }
